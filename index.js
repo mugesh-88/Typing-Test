@@ -1,4 +1,4 @@
-const url1 = "https://api.quotable.io/quotes/random?minLength=100&maxLength=140";
+const url1 = "https://api.quotable.io/quotes/random?minLength=90&maxLength=130";
 const url2 = "https://type.fit/api/quotes";
 const qouteSection= document.getElementById("qoutes");
 const userInput =document.getElementById("qoutes-input");
@@ -6,17 +6,25 @@ let time=60;
 let timer="";
 let mistakes=0;
 let qoute="";
+let timeroff=false;
 
 // using quotable api fetch qoute
 async function randomQoutes1(){
     try {
         const response = await fetch(url1)
         .then(function(response) {return response.json()});
-            qoute=response[0].content;
-            let arr =qoute.split("").map((value)=>{
-                return "<span class='qoute-chars'>"+value+"</span>"
-            })
-            qouteSection.innerHTML+=arr.join("");
+            
+        qoute=response[0].content;
+
+        //split the qoute into span of each characters 
+
+        let arr =qoute.split("").map((value)=>{
+            return "<span class='qoute-chars'>"+value+"</span>"
+        })
+            
+        qouteSection.innerHTML+=arr.join("");
+
+            //console.log(qoute);
     }
     catch(error){
         console.log(error);
@@ -31,7 +39,12 @@ async function randomQoutes2(){
 
             let x=Math.floor((Math.random() * response.length) - 1);
             qoute=response[x].text;
-            //qouteSection.innerHTML=`<span class="qoute-chars">${qoute}</span>`;
+
+            let arr =qoute.split("").map((value)=>{
+                return "<span class='qoute-chars'>"+value+"</span>"
+            })
+            qouteSection.innerHTML+=arr.join("");
+            
     }
     catch(error){
         console.log(error);
@@ -50,6 +63,10 @@ userInput.addEventListener("input",(async) => {
     let userInputChars=userInput.value.split("");
     
     //start timer
+    if(!timeroff){
+        timeroff=true;
+        timeReduce();
+    }
 
     qouteChars.forEach((char,index)=>{
         //Check for Equality
@@ -90,6 +107,7 @@ const displayResult = () =>{
     document.getElementById("stop-test").style.display="none";
     
     clearInterval(timer);
+    timeroff=true;
 
     userInput.disabled = true;
 
@@ -97,7 +115,30 @@ const displayResult = () =>{
     if(time!=0){
         timeTaken= (60-time)/100;
     }
-    document.getElementById("wpm").innerText = (userInput.value.length/6/timeTaken).toFixed(2)+"wpm";
+
+    let typwords= userInput.value.length;
+
+    if( qoute.length < userInput.length ){
+        typwords=qoute.length;
+    }
+
+    console.log(typwords);
+
+    if(typwords>0){
+        let acc=((typwords-mistakes)/(typwords==0?1:typwords)*100).toFixed(2);
+        let wpm=((typwords-mistakes)/6/timeTaken).toFixed(2);
+
+        // wpm display
+        document.getElementById("wpm").innerText = wpm+"wpm";
+
+        //Accuracy display
+        document.getElementById("accuracy").innerText = (acc)+"%";
+    }
+
+    //Reload
+    setTimeout(() => {
+        document.location.reload();
+      }, 15000);
 }
 
 
@@ -108,7 +149,7 @@ const startTest = () =>{
     userInput.disabled=false;
     document.getElementById("start-test").style.display="none";
     document.getElementById("stop-test").style.display="block"; 
-    timeReduce();
+    //timeReduce();
 }
 
 //updateTImer
@@ -118,7 +159,7 @@ function updateTimer(){
         displayResult();
     }
     else{
-        document.getElementById("timer").innertext = (--time)+"s";
+        document.getElementById("timer").innerText = (--time)+"s";
     }
 }
 
@@ -128,6 +169,22 @@ const timeReduce =() =>{
     timer=setInterval(updateTimer,1000);
 }
 
+const refreshIcon = document.querySelector(".refresh");
+
+function refreshContent(){
+    document.getElementById("refimage").classList.add("refimg");
+    //Reload
+    setTimeout(() => {
+        document.location.reload();
+      }, 1200);
+};
+
+
+
+
+
+
+
 window.onload = () => {
     userInput.value="";
     document.getElementById("start-test").style.display="block";
@@ -136,5 +193,7 @@ window.onload = () => {
     randomQoutes1();
     //randomQuotes2();
 }
+
+
 
 
