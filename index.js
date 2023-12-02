@@ -138,7 +138,7 @@ const displayResult = () =>{
     //Reload
     setTimeout(() => {
         document.location.reload();
-      }, 15000);
+      }, 30000);
 }
 
 
