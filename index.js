@@ -61,6 +61,10 @@ userInput.addEventListener("input",(async) => {
 
     //Array of input chars
     let userInputChars=userInput.value.split("");
+
+    if(userInputChars.length>=qouteChars.length){
+        displayResult();
+    }
     
     //start timer
     if(!timeroff){
@@ -113,7 +117,7 @@ const displayResult = () =>{
 
     let timeTaken = 1; 
     if(time!=0){
-        timeTaken= (60-time)/100;
+        timeTaken= (60-time)/60;
     }
 
     let typwords= userInput.value.length;
@@ -122,18 +126,22 @@ const displayResult = () =>{
         typwords=qoute.length;
     }
 
-    console.log(typwords);
+    //console.log(typwords);
 
-    if(typwords>0){
-        let acc=((typwords-mistakes)/(typwords==0?1:typwords)*100).toFixed(2);
-        let wpm=((typwords-mistakes)/6/timeTaken).toFixed(2);
+    
+    let acc=((typwords-mistakes)/(typwords==0?1:typwords)*100).toFixed(2);
+    let wpm=((typwords-mistakes)/6/timeTaken).toFixed(2);
 
-        // wpm display
-        document.getElementById("wpm").innerText = wpm+"wpm";
-
-        //Accuracy display
-        document.getElementById("accuracy").innerText = (acc)+"%";
+    if(typwords<mistakes||typwords==0){
+        wpm=(0.00).toFixed(2);
+        acc=(0.00).toFixed(2);
     }
+
+    // wpm display
+    document.getElementById("wpm").innerText = wpm+"wpm";
+
+    //Accuracy display
+    document.getElementById("accuracy").innerText = (acc)+"%";
 
     //Reload
     setTimeout(() => {
